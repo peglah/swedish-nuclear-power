@@ -1,0 +1,14 @@
+{
+  "domain": "swedish_nuclear_power",
+  "name": "Swedish Nuclear Power",
+  "version": "1.0.0",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "documentation": "https://github.com/peglah/swedish-nuclear-power",
+  "issue_tracker": "https://github.com/peglah/swedish-nuclear-power/issues",
+  "dependencies": [],
+  "codeowners": ["@peglah"],
+  "requirements": ["requests"],
+  "config_flow": true,
+  "quality_scale": "silver"
+}

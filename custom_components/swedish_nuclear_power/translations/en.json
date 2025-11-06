@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Swedish Nuclear Power",
+        "description": "Configure the Swedish Nuclear Power integration to monitor real-time power output from Swedish nuclear reactors.",
+        "data": {
+          "scan_interval": "Update Interval"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Swedish Nuclear Power Options",
+        "data": {
+          "scan_interval": "Update Interval"
+        }
+      }
+    }
+  }
+}
