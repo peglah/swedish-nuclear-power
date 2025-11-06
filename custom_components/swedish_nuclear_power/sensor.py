@@ -23,7 +23,7 @@ from .coordinator import SwedishNuclearPowerCoordinator
 POWER_SENSOR_DESCRIPTION = SensorEntityDescription(
     key="power",
     name="Power Output",
-    native_unit_of_measurement=UnitOfPower.MEGAWATT,
+    native_unit_of_measurement=UnitOfPower.MEGA_WATT,
     device_class=SensorDeviceClass.POWER,
     state_class=SensorStateClass.MEASUREMENT,
     icon="mdi:reactor",
@@ -39,7 +39,7 @@ TIMESTAMP_SENSOR_DESCRIPTION = SensorEntityDescription(
 TOTAL_POWER_SENSOR_DESCRIPTION = SensorEntityDescription(
     key="total_power",
     name="Total Swedish Nuclear Power",
-    native_unit_of_measurement=UnitOfPower.MEGAWATT,
+    native_unit_of_measurement=UnitOfPower.MEGA_WATT,
     device_class=SensorDeviceClass.POWER,
     state_class=SensorStateClass.MEASUREMENT,
     icon="mdi:reactor",
