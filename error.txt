@@ -1,0 +1,16 @@
+Logger: homeassistant.config_entries
+Source: config_entries.py:761
+First occurred: 15:45:38 (1 occurrence)
+Last logged: 15:45:38
+Error setting up entry Swedish Nuclear Power for swedish_nuclear_power
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/config_entries.py", line 761, in __async_setup_with_context
+    result = await component.async_setup_entry(hass, self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/config/custom_components/swedish_nuclear_power/__init__.py", line 19, in async_setup_entry
+    coordinator = SwedishNuclearPowerCoordinator(hass, scan_interval)
+  File "/config/custom_components/swedish_nuclear_power/coordinator.py", line 26, in __init__
+    logger=hass.logger,
+           ^^^^^^^^^^^
+AttributeError: 'HomeAssistant' object has no attribute 'logger'

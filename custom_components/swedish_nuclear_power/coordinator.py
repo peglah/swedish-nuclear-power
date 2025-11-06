@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import re
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -13,7 +14,9 @@ import requests
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import PLANTS
+from .const import PLANTS, DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
@@ -23,7 +26,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
         """Initialize."""
         super().__init__(
             hass,
-            logger=hass.logger,
+            logger=_LOGGER,
             name="Swedish Nuclear Power",
             update_interval=scan_interval,
         )
@@ -58,7 +61,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                     all_data[plant_key] = data
                     
             except Exception as e:
-                self.logger.warning(f"Failed to fetch data from {plant_config['name']}: {e}")
+                _LOGGER.warning(f"Failed to fetch data from {plant_config['name']}: {e}")
                 continue
         
         return all_data
@@ -67,24 +70,23 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
         """Fetch data from Vattenfall plants (Ringhals, Forsmark)."""
         try:
             url = plant_config["url"]
-            self.logger.info(f"Fetching data from {url}")
+            _LOGGER.info(f"Fetching data from {url}")
             
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
             
             data = self._extract_production_data(response.text, plant_key)
             if data:
-                self.logger.info(f"Successfully extracted data for {plant_key}")
+                _LOGGER.info(f"Successfully extracted data for {plant_key}")
                 return data
             else:
-                self.logger.error(f"Failed to extract data from {plant_key}")
+                _LOGGER.error(f"Failed to extract data from {plant_key}")
                 return None
                 
         except requests.RequestException as e:
-            self.logger.error(f"Request error for {plant_key}: {e}")
-            return None
+            _LOGGER.error(f"Request error for {plant_key}: {e}")
         except Exception as e:
-            self.logger.error(f"Unexpected error for {plant_key}: {e}")
+            _LOGGER.error(f"Unexpected error for {plant_key}: {e}")
             return None
 
     def _extract_production_data(self, html_content: str, plant_name: str) -> Optional[Dict[str, Any]]:
@@ -107,18 +109,18 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                 except json.JSONDecodeError:
                     continue
             
-            self.logger.warning(f"No valid JSON data found for {plant_name}")
+            _LOGGER.warning(f"No valid JSON data found for {plant_name}")
             return None
             
         except Exception as e:
-            self.logger.error(f"Error extracting data for {plant_name}: {e}")
+            _LOGGER.error(f"Error extracting data for {plant_name}: {e}")
             return None
 
     def _fetch_okg_data(self, plant_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Fetch data from OKG O3 API."""
         try:
             url = plant_config["url"]
-            self.logger.info(f"Fetching data from {url}")
+            _LOGGER.info(f"Fetching data from {url}")
             
             # OKG API requires format parameter
             response = self.session.get(f"{url}?format=json", timeout=30)
@@ -145,8 +147,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
             }
             
         except requests.RequestException as e:
-            self.logger.error(f"Request error for OKG: {e}")
-            return None
+            _LOGGER.error(f"Request error for OKG: {e}")
         except Exception as e:
-            self.logger.error(f"Unexpected error for OKG: {e}")
+            _LOGGER.error(f"Unexpected error for OKG: {e}")
             return None
