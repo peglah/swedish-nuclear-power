@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from dateutil import parser as dateparser
 from typing import Any, Dict, List
 
 from homeassistant.components.sensor import (
@@ -123,8 +124,14 @@ class NuclearPowerSensor(CoordinatorEntity, SensorEntity):
         plant_data = data[self.plant_key]
         
         if self.entity_description.key == "last_update":
-            # Return timestamp
-            return plant_data.get("timestamp")
+            # Return timestamp as datetime object
+            timestamp_str = plant_data.get("timestamp")
+            if timestamp_str:
+                try:
+                    return dateparser.parse(timestamp_str)
+                except (ValueError, TypeError):
+                    return None
+            return None
         else:
             # Return reactor power
             for reactor_data in plant_data.get("data", []):
