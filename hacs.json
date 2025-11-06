@@ -1,0 +1,6 @@
+{
+  "name": "Swedish Nuclear Power",
+  "content_in_root": false,
+  "country": "SE",
+  "homeassistant": "2023.1.0"
+}
