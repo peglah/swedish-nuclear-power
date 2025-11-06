@@ -6,7 +6,7 @@ import asyncio
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
 import requests
@@ -28,7 +28,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
             hass,
             logger=_LOGGER,
             name="Swedish Nuclear Power",
-            update_interval=scan_interval,
+            update_interval=timedelta(seconds=scan_interval),
         )
         self.session = requests.Session()
         self.session.headers.update({
