@@ -218,14 +218,14 @@ def test_file_structure():
     print("\n📁 Checking file structure...")
     
     required_files = [
-        'swedish_nuclear_power/__init__.py',
-        'swedish_nuclear_power/manifest.json',
-        'swedish_nuclear_power/const.py',
-        'swedish_nuclear_power/config_flow.py',
-        'swedish_nuclear_power/coordinator.py',
-        'swedish_nuclear_power/sensor.py',
-        'swedish_nuclear_power/options.py',
-        'swedish_nuclear_power/translations/en.json',
+        'custom_components/swedish_nuclear_power/__init__.py',
+        'custom_components/swedish_nuclear_power/manifest.json',
+        'custom_components/swedish_nuclear_power/const.py',
+        'custom_components/swedish_nuclear_power/config_flow.py',
+        'custom_components/swedish_nuclear_power/coordinator.py',
+        'custom_components/swedish_nuclear_power/sensor.py',
+        'custom_components/swedish_nuclear_power/options.py',
+        'custom_components/swedish_nuclear_power/translations/en.json',
     ]
     
     missing_files = []
@@ -248,7 +248,7 @@ def test_manifest():
     print("\n📋 Testing manifest.json...")
     
     try:
-        with open('swedish_nuclear_power/manifest.json', 'r') as f:
+        with open('custom_components/swedish_nuclear_power/manifest.json', 'r') as f:
             manifest = json.load(f)
         
         required_fields = ['domain', 'name', 'version', 'integration_type', 'iot_class']
