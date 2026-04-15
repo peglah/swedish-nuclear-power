@@ -101,11 +101,16 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                     json_data = json.loads(match.strip())
                     if 'powerPlant' in json_data and 'blockProductionDataList' in json_data:
                         if json_data['powerPlant'].lower() == plant_name.lower():
-                            return {
-                                'timestamp': json_data.get('timestamp'),
-                                'power_plant': json_data['powerPlant'],
-                                'data': json_data['blockProductionDataList']
-                            }
+                    # Ensure production values are non-negative
+                    for reactor in json_data['blockProductionDataList']:
+                        if 'production' in reactor:
+                            reactor['production'] = max(0, reactor['production'])
+
+                    return {
+                        'timestamp': json_data.get('timestamp'),
+                        'power_plant': json_data['powerPlant'],
+                        'data': json_data['blockProductionDataList']
+                    }
                 except json.JSONDecodeError:
                     continue
             
@@ -130,7 +135,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
             
             # Calculate percentage for O3 using max capacity
             max_capacity = plant_config.get("max_capacity", {}).get("O3", 1450)
-            current_power = data.get('value', 0)
+            current_power = max(0, data.get('value', 0))  # Ensure power is non-negative
             percentage = (current_power / max_capacity * 100) if max_capacity > 0 else 0
             
             # OKG returns single reactor data
