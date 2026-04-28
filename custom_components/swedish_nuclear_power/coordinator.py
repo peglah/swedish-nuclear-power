@@ -105,6 +105,12 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                         for reactor in json_data['blockProductionDataList']:
                             if 'production' in reactor:
                                 reactor['production'] = max(0, reactor['production'])
+                        
+                        return {
+                            'timestamp': json_data.get('timestamp'),
+                            'power_plant': json_data['powerPlant'],
+                            'data': json_data['blockProductionDataList']
+                        }
 
                     return {
                         'timestamp': json_data.get('timestamp'),
