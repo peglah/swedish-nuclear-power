@@ -101,10 +101,10 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                     json_data = json.loads(match.strip())
                     if 'powerPlant' in json_data and 'blockProductionDataList' in json_data:
                         if json_data['powerPlant'].lower() == plant_name.lower():
-                    # Ensure production values are non-negative
-                    for reactor in json_data['blockProductionDataList']:
-                        if 'production' in reactor:
-                            reactor['production'] = max(0, reactor['production'])
+                        # Ensure production values are non-negative
+                        for reactor in json_data['blockProductionDataList']:
+                            if 'production' in reactor:
+                                reactor['production'] = max(0, reactor['production'])
 
                     return {
                         'timestamp': json_data.get('timestamp'),
