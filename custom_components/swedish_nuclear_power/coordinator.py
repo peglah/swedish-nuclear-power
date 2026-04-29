@@ -47,7 +47,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
     def _fetch_all_plants(self) -> Dict[str, Any]:
         """Fetch data from all nuclear plants."""
         all_data = {}
-        
+
         for plant_key, plant_config in PLANTS.items():
             try:
                 if plant_config.get("api", False):
@@ -56,14 +56,14 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                 else:
                     # Vattenfall scraping
                     data = self._fetch_vattenfall_data(plant_key, plant_config)
-                
+
                 if data:
                     all_data[plant_key] = data
-                    
+
             except Exception as e:
                 _LOGGER.warning(f"Failed to fetch data from {plant_config['name']}: {e}")
                 continue
-        
+
         return all_data
 
     def _fetch_vattenfall_data(self, plant_key: str, plant_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -71,10 +71,10 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
         try:
             url = plant_config["url"]
             _LOGGER.info(f"Fetching data from {url}")
-            
+
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
-            
+
             data = self._extract_production_data(response.text, plant_key)
             if data:
                 _LOGGER.info(f"Successfully extracted data for {plant_key}")
@@ -82,7 +82,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
             else:
                 _LOGGER.error(f"Failed to extract data from {plant_key}")
                 return None
-                
+
         except requests.RequestException as e:
             _LOGGER.error(f"Request error for {plant_key}: {e}")
         except Exception as e:
@@ -95,28 +95,28 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
             # Look for JSON data in script tags
             pattern = r'<script[^>]*type="application/json"[^>]*>(.*?)</script>'
             matches = re.findall(pattern, html_content, re.DOTALL)
-            
+
             for match in matches:
                 try:
                     json_data = json.loads(match.strip())
                     if 'powerPlant' in json_data and 'blockProductionDataList' in json_data:
                         if json_data['powerPlant'].lower() == plant_name.lower():
-                        # Ensure production values are non-negative
-                        for reactor in json_data['blockProductionDataList']:
-                            if 'production' in reactor:
-                                reactor['production'] = max(0, reactor['production'])
-                        
-                        return {
-                            'timestamp': json_data.get('timestamp'),
-                            'power_plant': json_data['powerPlant'],
-                            'data': json_data['blockProductionDataList']
-                        }
+                            # Ensure production values are non-negative
+                            for reactor in json_data['blockProductionDataList']:
+                                if 'production' in reactor:
+                                    reactor['production'] = max(0, reactor['production'])
+
+                            return {
+                                'timestamp': json_data.get('timestamp'),
+                                'power_plant': json_data['powerPlant'],
+                                'data': json_data['blockProductionDataList']
+                            }
                 except json.JSONDecodeError:
                     continue
-            
+
             _LOGGER.warning(f"No valid JSON data found for {plant_name}")
             return None
-            
+
         except Exception as e:
             _LOGGER.error(f"Error extracting data for {plant_name}: {e}")
             return None
@@ -126,18 +126,18 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
         try:
             url = plant_config["url"]
             _LOGGER.info(f"Fetching data from {url}")
-            
+
             # OKG API requires format parameter
             response = self.session.get(f"{url}?format=json", timeout=30)
             response.raise_for_status()
-            
+
             data = response.json()
-            
+
             # Calculate percentage for O3 using max capacity
             max_capacity = plant_config.get("max_capacity", {}).get("O3", 1450)
             current_power = data.get('value', 0)
             percentage = (current_power / max_capacity * 100) if max_capacity > 0 else 0
-            
+
             # OKG returns single reactor data
             return {
                 'timestamp': data.get('timestamp'),
@@ -150,7 +150,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
                     'valueDate': data.get('valueDate')
                 }]
             }
-            
+
         except requests.RequestException as e:
             _LOGGER.error(f"Request error for OKG: {e}")
         except Exception as e:
