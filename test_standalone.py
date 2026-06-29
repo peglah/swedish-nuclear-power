@@ -129,7 +129,7 @@ class NuclearDataFetcher:
             
             # Calculate percentage for O3 using max capacity
             max_capacity = plant_config.get("max_capacity", {}).get("O3", 1450)
-            current_power = data.get('value', 0)
+            current_power = max(0, data.get('value', 0))
             percentage = (current_power / max_capacity * 100) if max_capacity > 0 else 0
             
             # OKG returns single reactor data
