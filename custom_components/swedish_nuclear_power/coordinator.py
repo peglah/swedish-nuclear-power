@@ -59,10 +59,16 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
 
                 if data:
                     all_data[plant_key] = data
+                elif self.data and plant_key in self.data:
+                    all_data[plant_key] = self.data[plant_key]
+                    _LOGGER.warning(
+                        f"Failed to fetch {plant_config['name']}, reusing previous data"
+                    )
 
             except Exception as e:
                 _LOGGER.warning(f"Failed to fetch data from {plant_config['name']}: {e}")
-                continue
+                if self.data and plant_key in self.data:
+                    all_data[plant_key] = self.data[plant_key]
 
         return all_data
 
@@ -85,6 +91,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
 
         except requests.RequestException as e:
             _LOGGER.error(f"Request error for {plant_key}: {e}")
+            return None
         except Exception as e:
             _LOGGER.error(f"Unexpected error for {plant_key}: {e}")
             return None
@@ -153,6 +160,7 @@ class SwedishNuclearPowerCoordinator(DataUpdateCoordinator):
 
         except requests.RequestException as e:
             _LOGGER.error(f"Request error for OKG: {e}")
+            return None
         except Exception as e:
             _LOGGER.error(f"Unexpected error for OKG: {e}")
             return None
